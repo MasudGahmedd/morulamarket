@@ -9,6 +9,12 @@
   <link rel="preconnect" href="https://fonts.cdnfonts.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+  <script>
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <style>
     :root {
       --font-sf: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -444,7 +450,6 @@
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://zioeumxpjaecgocsouyj.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_N39Prr3PH27w-bhEuu_eXw_UubsrycZ";
@@ -464,7 +469,9 @@
     function setThemeIcon(theme) {
       const icon = document.getElementById("theme-toggle-icon");
 
-      if (!icon) return;
+      if (!icon) {
+        return;
+      }
 
       if (theme === "dark") {
         icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3c0 .14-.01.29-.01.43a7 7 0 0 0 9.37 6.58c.15 0 .29-.01.43-.02z"></path>';
@@ -475,45 +482,52 @@
 
     function applyTheme(theme) {
       body.setAttribute("data-theme", theme);
-      const label = themeToggle.querySelector(".theme-toggle-label");
 
+      const label = themeToggle ? themeToggle.querySelector(".theme-toggle-label") : null;
       if (label) {
         label.textContent = theme === "dark" ? "Light mode" : "Dark mode";
       }
 
       setThemeIcon(theme);
-      localStorage.setItem("morula-theme", theme);
+
+      try {
+        localStorage.setItem("morula-theme", theme);
+      } catch (error) {
+      }
     }
 
-    const savedTheme = localStorage.getItem("morula-theme");
-    if (savedTheme === "light" || savedTheme === "dark") {
-      applyTheme(savedTheme);
-    }
+    function initThemeToggle() {
+      let savedTheme = null;
 
-    themeToggle.addEventListener("click", () => {
-      const nextTheme = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      applyTheme(nextTheme);
-    });
+      try {
+        savedTheme = localStorage.getItem("morula-theme");
+      } catch (error) {
+      }
 
-    let supabase = null;
+      applyTheme(savedTheme === "dark" ? "dark" : "light");
 
-    if (
-      window.supabase &&
-      SUPABASE_URL !== "YOUR_SUPABASE_URL" &&
-      SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY"
-    ) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const nextTheme = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          applyTheme(nextTheme);
+        });
+      }
     }
 
     async function submitWaitlist() {
       const email = waitlistEmail.value.trim().toLowerCase();
 
-      if (!email) {
+      if (!email || !waitlistEmail.checkValidity()) {
         waitlistNote.textContent = "Enter a valid email address first.";
         return;
       }
 
-      if (!supabase) {
+      if (
+        !SUPABASE_URL ||
+        !SUPABASE_ANON_KEY ||
+        SUPABASE_URL === "YOUR_SUPABASE_URL" ||
+        SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
+      ) {
         waitlistNote.textContent = "Add your Supabase URL and anon key in this file to start collecting emails.";
         return;
       }
@@ -521,48 +535,70 @@
       waitlistNote.textContent = "Joining waitlist...";
       waitlistSubmit.disabled = true;
 
-      const { error } = await supabase
-        .from("waitlist_signups")
-        .insert({
-          email,
-          source: "coming-soon",
-          role_interest: "unknown"
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist_signups`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            email,
+            source: "coming-soon",
+            role_interest: "unknown"
+          })
         });
 
-      if (error) {
-        if (error.code === "23505") {
-          waitlistNote.textContent = "That email is already on the waitlist.";
-          waitlistSubmit.disabled = false;
+        if (response.ok) {
+          waitlistForm.reset();
+          waitlistNote.textContent = "You are on the waitlist. We will let you know when Morula Market opens.";
           return;
         }
 
-        waitlistNote.textContent = error.message
-          ? `Could not save your email: ${error.message}`
-          : "Could not save your email right now. Please try again.";
-        waitlistSubmit.disabled = false;
-        return;
-      }
+        let errorMessage = "Could not save your email right now. Please try again.";
 
-      waitlistForm.reset();
-      waitlistNote.textContent = "You are on the waitlist. We will let you know when Morula Market opens.";
-      waitlistSubmit.disabled = false;
+        try {
+          const errorData = await response.json();
+
+          if (response.status === 409 || errorData.code === "23505") {
+            errorMessage = "That email is already on the waitlist.";
+          } else if (errorData.message) {
+            errorMessage = `Could not save your email: ${errorData.message}`;
+          }
+        } catch (error) {
+        }
+
+        waitlistNote.textContent = errorMessage;
+      } catch (error) {
+        waitlistNote.textContent = "Could not connect to Supabase. Check your project URL, key, and network access.";
+      } finally {
+        waitlistSubmit.disabled = false;
+      }
     }
 
-    waitlistForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      submitWaitlist();
-    });
-
-    waitlistSubmit.addEventListener("click", () => {
-      submitWaitlist();
-    });
-
-    waitlistEmail.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        submitWaitlist();
+    function initWaitlist() {
+      if (waitlistForm) {
+        waitlistForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          submitWaitlist();
+        });
       }
-    });
+
+      if (waitlistSubmit) {
+        waitlistSubmit.addEventListener("click", submitWaitlist);
+      }
+
+      if (waitlistEmail) {
+        waitlistEmail.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            submitWaitlist();
+          }
+        });
+      }
+    }
 
     function typeLoop() {
       const currentWord = words[wordIndex];
@@ -587,13 +623,23 @@
         }
       }
 
-      setTimeout(typeLoop, delay);
+      window.setTimeout(typeLoop, delay);
     }
 
-    typedWord.textContent = "";
-    charIndex = 0;
-    deleting = false;
-    typeLoop();
+    function initTyping() {
+      if (!typedWord) {
+        return;
+      }
+
+      typedWord.textContent = "";
+      charIndex = 0;
+      deleting = false;
+      typeLoop();
+    }
+
+    initThemeToggle();
+    initWaitlist();
+    initTyping();
   </script>
 </body>
 </html>
