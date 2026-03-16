@@ -1,907 +1,599 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Morula Market — Coming Soon</title>
-<style>
-/* ── SF Pro font stack ── */
-:root {
-  --font: -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-
-  /* dark theme */
-  --bg: #0a0a0a;
-  --surface: rgba(255,255,255,0.04);
-  --surface-hover: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.09);
-  --border-hover: rgba(255,255,255,0.18);
-  --text-primary: #f5f0e8;
-  --text-secondary: rgba(245,240,232,0.5);
-  --text-tertiary: rgba(245,240,232,0.3);
-  --accent: #c8914a;
-  --accent-soft: rgba(200,145,74,0.15);
-  --accent-glow: rgba(200,145,74,0.25);
-  --success: #3ecf8e;
-  --success-soft: rgba(62,207,142,0.12);
-  --orb1: #c8914a;
-  --orb2: #2d6a4f;
-  --orb3: #8b5e3c;
-  --orb4: #1a4a35;
-  --orb5: #e8a56a;
-  --grain-opacity: 0.032;
-}
-
-[data-theme="light"] {
-  --bg: #faf7f2;
-  --surface: rgba(0,0,0,0.03);
-  --surface-hover: rgba(0,0,0,0.055);
-  --border: rgba(0,0,0,0.08);
-  --border-hover: rgba(0,0,0,0.15);
-  --text-primary: #1a1208;
-  --text-secondary: rgba(26,18,8,0.5);
-  --text-tertiary: rgba(26,18,8,0.3);
-  --accent: #a86c28;
-  --accent-soft: rgba(168,108,40,0.1);
-  --accent-glow: rgba(168,108,40,0.2);
-  --success: #1a7a52;
-  --success-soft: rgba(26,122,82,0.1);
-  --orb1: #d4a06a;
-  --orb2: #4a9a72;
-  --orb3: #c48050;
-  --orb4: #2a6a45;
-  --orb5: #e8c090;
-  --grain-opacity: 0.018;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text-primary);
-  min-height: 100vh;
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* ── GRAIN OVERLAY ── */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: var(--grain-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size: 180px;
-}
-
-/* ── LIQUID BACKGROUND ── */
-.liquid-bg {
-  position: fixed; inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  background: var(--bg);
-}
-
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.55;
-  will-change: transform;
-}
-
-[data-theme="light"] .orb { opacity: 0.35; filter: blur(90px); }
-
-.orb-1 {
-  width: 600px; height: 600px;
-  background: var(--orb1);
-  top: -180px; left: -160px;
-  animation: drift1 18s ease-in-out infinite;
-}
-.orb-2 {
-  width: 500px; height: 500px;
-  background: var(--orb2);
-  top: 30%; right: -150px;
-  animation: drift2 22s ease-in-out infinite;
-}
-.orb-3 {
-  width: 380px; height: 380px;
-  background: var(--orb3);
-  bottom: -100px; left: 20%;
-  animation: drift3 16s ease-in-out infinite;
-}
-.orb-4 {
-  width: 320px; height: 320px;
-  background: var(--orb4);
-  top: 55%; left: -80px;
-  animation: drift4 24s ease-in-out infinite;
-}
-.orb-5 {
-  width: 260px; height: 260px;
-  background: var(--orb5);
-  bottom: 15%; right: 10%;
-  animation: drift5 20s ease-in-out infinite;
-}
-
-@keyframes drift1 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33%      { transform: translate(80px, 60px) scale(1.08); }
-  66%      { transform: translate(-40px, 100px) scale(0.95); }
-}
-@keyframes drift2 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  40%      { transform: translate(-90px, -70px) scale(1.1); }
-  70%      { transform: translate(50px, 80px) scale(0.92); }
-}
-@keyframes drift3 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  30%      { transform: translate(70px, -80px) scale(1.05); }
-  60%      { transform: translate(-60px, -40px) scale(1.12); }
-}
-@keyframes drift4 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(110px, -60px) scale(1.07); }
-}
-@keyframes drift5 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  35%      { transform: translate(-70px, 50px) scale(1.1); }
-  70%      { transform: translate(40px, -90px) scale(0.9); }
-}
-
-/* ── FROSTED GLASS MESH (inner tint) ── */
-.liquid-bg::after {
-  content: '';
-  position: absolute; inset: 0;
-  backdrop-filter: blur(0px);
-  background: radial-gradient(ellipse at 50% 0%, transparent 40%, var(--bg) 90%);
-  pointer-events: none;
-}
-
-/* ── PAGE WRAPPER ── */
-.page {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 24px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── TOPBAR ── */
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 28px 0 0;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.1s forwards;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.logo-mark {
-  width: 34px; height: 34px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--orb1) 0%, var(--orb3) 100%);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 12px var(--accent-glow);
-  flex-shrink: 0;
-}
-
-.logo-mark svg { width: 18px; height: 18px; }
-
-.logo-text {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  color: var(--text-primary);
-}
-
-.logo-text span {
-  color: var(--accent);
-}
-
-.theme-toggle {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary);
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.theme-toggle:hover {
-  background: var(--surface-hover);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
-}
-
-.theme-toggle svg { width: 16px; height: 16px; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
-.theme-toggle:hover svg { transform: rotate(20deg); }
-
-/* ── HERO ── */
-.hero {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 64px 0 0;
-  gap: 0;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 7px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  letter-spacing: 0.04em;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  opacity: 0;
-  animation: fadeUp 0.8s 0.25s forwards;
-  margin-bottom: 32px;
-}
-
-.badge-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent-glow);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.85); }
-}
-
-.hero-headline {
-  font-size: clamp(42px, 9vw, 80px);
-  font-weight: 700;
-  letter-spacing: -2.5px;
-  line-height: 1.0;
-  color: var(--text-primary);
-  opacity: 0;
-  animation: fadeUp 0.9s 0.35s forwards;
-  margin-bottom: 8px;
-}
-
-.hero-headline .line2 {
-  display: block;
-  color: var(--accent);
-  font-style: italic;
-  font-weight: 300;
-  letter-spacing: -1.5px;
-}
-
-.hero-sub {
-  font-size: clamp(15px, 2.5vw, 18px);
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.65;
-  max-width: 480px;
-  margin: 24px auto 0;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.45s forwards;
-}
-
-/* ── WAITLIST FORM ── */
-.waitlist-wrap {
-  width: 100%;
-  max-width: 480px;
-  margin: 48px auto 0;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.55s forwards;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 6px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-row:focus-within {
-  border-color: var(--border-hover);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-
-.form-row input {
-  flex: 1;
-  min-width: 0;
-  height: 44px;
-  padding: 0 16px;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: var(--font);
-  font-size: 14px;
-  color: var(--text-primary);
-}
-
-.form-row input::placeholder { color: var(--text-tertiary); }
-
-.form-row button {
-  height: 44px;
-  padding: 0 22px;
-  border-radius: 11px;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 16px var(--accent-glow);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.form-row button:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-glow);
-}
-
-.form-row button:active { transform: scale(0.97); }
-
-.form-note {
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  margin-top: 12px;
-  line-height: 1.5;
-}
-
-/* ── SUCCESS STATE ── */
-.success-msg {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border-radius: 14px;
-  background: var(--success-soft);
-  border: 1px solid rgba(62,207,142,0.2);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--success);
-  animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
-}
-
-[data-theme="light"] .success-msg { border-color: rgba(26,122,82,0.2); }
-
-.success-msg .check {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--success);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.9) translateY(4px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* ── DIVIDER ── */
-.or-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 28px 0 24px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.62s forwards;
-  max-width: 480px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.or-row::before, .or-row::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.or-row span {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  letter-spacing: 0.06em;
-  font-weight: 500;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-/* ── WHATSAPP BUTTON ── */
-.wa-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 28px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-primary);
-  text-decoration: none;
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  opacity: 0;
-  animation: fadeUp 0.9s 0.68s forwards;
-  -webkit-tap-highlight-color: transparent;
-  max-width: 480px;
-  width: 100%;
-}
-
-.wa-btn:hover {
-  background: var(--surface-hover);
-  border-color: rgba(37,211,102,0.3);
-  box-shadow: 0 4px 20px rgba(37,211,102,0.12);
-  transform: translateY(-1px);
-}
-
-.wa-btn:active { transform: scale(0.98); }
-
-.wa-icon {
-  width: 22px; height: 22px;
-  background: #25d366;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-
-.wa-icon svg { width: 13px; height: 13px; }
-
-.wa-label { font-weight: 600; }
-.wa-sub { color: var(--text-tertiary); font-size: 12px; margin-left: 2px; }
-
-/* ── FEATURES ROW ── */
-.features {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 48px 0 0;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.75s forwards;
-}
-
-.feat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  letter-spacing: 0.01em;
-}
-
-.feat-chip-icon { font-size: 14px; line-height: 1; }
-
-/* ── FOOTER ── */
-.footer {
-  padding: 40px 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--border);
-  margin-top: 64px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.85s forwards;
-}
-
-.footer-left {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  line-height: 1.5;
-}
-
-.footer-left strong { color: var(--text-secondary); font-weight: 500; }
-
-.footer-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.social-link {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-tertiary);
-  text-decoration: none;
-  transition: all 0.15s;
-  font-size: 13px;
-}
-
-.social-link:hover {
-  background: var(--surface-hover);
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-}
-
-/* ── COUNTER / SOCIAL PROOF ── */
-.social-proof {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 24px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.72s forwards;
-}
-
-.avatar-stack {
-  display: flex;
-  align-items: center;
-}
-
-.avatar-stack .av {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--bg);
-  background: var(--surface);
-  overflow: hidden;
-  margin-left: -8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.avatar-stack .av:first-child { margin-left: 0; }
-
-.av-1 { background: linear-gradient(135deg, #c8914a, #8b5e3c); color: white !important; }
-.av-2 { background: linear-gradient(135deg, #2d6a4f, #1a4a35); color: white !important; }
-.av-3 { background: linear-gradient(135deg, #6b46c1, #4c1d95); color: white !important; }
-.av-4 { background: linear-gradient(135deg, #0891b2, #0e7490); color: white !important; }
-
-.proof-text {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.proof-text strong {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── MOBILE ── */
-@media (max-width: 520px) {
-  .page { padding: 0 18px; }
-
-  .hero { padding: 48px 0 0; }
-
-  .form-row {
-    flex-direction: column;
-    padding: 10px;
-    gap: 8px;
-  }
-
-  .form-row input {
-    height: 46px;
-    border-radius: 10px;
-    background: var(--surface-hover);
-    padding: 0 14px;
-  }
-
-  .form-row button {
-    height: 46px;
-    border-radius: 10px;
-    width: 100%;
-  }
-
-  .features { gap: 6px; }
-
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: 48px;
-  }
-}
-
-@media (max-width: 380px) {
-  .hero-headline { letter-spacing: -1.5px; }
-}
-
-/* ── COUNT UP TEXT ── */
-.count-badge {
-  display: inline-block;
-  font-variant-numeric: tabular-nums;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morula Market | Coming Soon</title>
+  <meta name="description" content="Morula Market is coming soon. Be the first to join the waitlist as an agent, seller, or buyer in Botswana.">
+  <meta name="theme-color" content="#2775FD">
+  <link rel="preconnect" href="https://fonts.cdnfonts.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+  <style>
+    :root {
+      --font-sf: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --radius: 24px;
+      --bg: #ffffff;
+      --bg-secondary: rgba(255, 255, 255, 0.78);
+      --card: rgba(255, 255, 255, 0.84);
+      --text: #050505;
+      --muted: #4b5563;
+      --border: rgba(39, 117, 253, 0.14);
+      --primary: #2775fd;
+      --primary-contrast: #ffffff;
+      --shadow: 0 24px 80px rgba(39, 117, 253, 0.12);
+      --liquid-a: rgba(39, 117, 253, 0.24);
+      --liquid-b: rgba(255, 255, 255, 0.74);
+      --liquid-c: rgba(5, 5, 5, 0.09);
+    }
+
+    body[data-theme="dark"] {
+      --bg: #050505;
+      --bg-secondary: rgba(10, 10, 10, 0.72);
+      --card: rgba(18, 18, 18, 0.74);
+      --text: #ffffff;
+      --muted: #b6c2d6;
+      --border: rgba(39, 117, 253, 0.22);
+      --primary: #2775fd;
+      --primary-contrast: #ffffff;
+      --shadow: 0 26px 90px rgba(0, 0, 0, 0.36);
+      --liquid-a: rgba(39, 117, 253, 0.34);
+      --liquid-b: rgba(255, 255, 255, 0.08);
+      --liquid-c: rgba(255, 255, 255, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sf);
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+
+    .liquid-bg {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: 0.95;
+      animation: drift 16s ease-in-out infinite;
+    }
+
+    .blob-a {
+      width: 360px;
+      height: 360px;
+      top: -60px;
+      left: -80px;
+      background: var(--liquid-a);
+    }
+
+    .blob-b {
+      width: 420px;
+      height: 420px;
+      right: -120px;
+      top: 12%;
+      background: var(--liquid-b);
+      animation-duration: 20s;
+    }
+
+    .blob-c {
+      width: 320px;
+      height: 320px;
+      left: 28%;
+      bottom: -100px;
+      background: var(--liquid-c);
+      animation-duration: 18s;
+    }
+
+    .page {
+      width: min(100%, 940px);
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .topbar {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      min-height: 52px;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+      font-size: calc(1rem + 5px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      justify-self: end;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle-label {
+      display: inline;
+    }
+
+    .spacer {
+      display: none;
+    }
+
+    .hero {
+      min-height: calc(100vh - 120px);
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-card {
+      width: 100%;
+      padding: 28px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2.4rem, 7vw, 4.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-copy {
+      width: min(100%, 680px);
+      margin: 0 auto;
+      font-size: clamp(1rem, 2.3vw, 1.18rem);
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .type-line {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 18px;
+      min-height: 2.2em;
+      font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .typed-word {
+      color: var(--primary);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 1ch;
+      color: var(--text);
+      animation: blink 1s steps(1, end) infinite;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.96rem;
+      text-decoration: none;
+      transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      background: var(--primary);
+      color: var(--primary-contrast);
+    }
+
+    .button-secondary {
+      background: var(--bg-secondary);
+      color: var(--text);
+      backdrop-filter: blur(14px);
+    }
+
+    .button-whatsapp {
+      background: #25d366;
+      color: #ffffff;
+      border-color: rgba(37, 211, 102, 0.4);
+    }
+
+    .button-whatsapp:hover {
+      background: #20bd5c;
+    }
+
+    .button-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .waitlist-box {
+      width: min(100%, 560px);
+      margin: 28px auto 0;
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--bg-secondary);
+      backdrop-filter: blur(14px);
+    }
+
+    .waitlist-input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      padding: 0 8px;
+    }
+
+    .waitlist-input::placeholder {
+      color: var(--muted);
+    }
+
+    .waitlist-note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @keyframes blink {
+      0%, 49% {
+        opacity: 1;
+      }
+      50%, 100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes drift {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      50% {
+        transform: translate3d(18px, -24px, 0) scale(1.08);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .topbar {
+        margin-bottom: 20px;
+      }
+
+      .brand {
+        font-size: 1.25rem;
+      }
+
+      .hero {
+        min-height: calc(100vh - 92px);
+      }
+
+      .hero-card {
+        padding: 22px 16px;
+        border-radius: 22px;
+      }
+
+      .waitlist-box {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        width: auto;
+        min-width: 42px;
+        min-height: 42px;
+        padding: 0;
+      }
+
+      .theme-toggle-label {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
-<body>
+<body data-theme="light">
+  <div class="liquid-bg" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
 
-<!-- LIQUID BACKGROUND -->
-<div class="liquid-bg">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-  <div class="orb orb-4"></div>
-  <div class="orb orb-5"></div>
-</div>
-
-<!-- PAGE -->
-<div class="page">
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">
-        <!-- Morula tree / leaf mark -->
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="8" r="5" fill="rgba(255,255,255,0.85)"/>
-          <circle cx="8"  cy="6" r="3" fill="rgba(255,255,255,0.6)"/>
-          <circle cx="16" cy="6" r="3" fill="rgba(255,255,255,0.6)"/>
-          <rect x="11" y="12" width="2" height="7" rx="1" fill="rgba(255,255,255,0.7)"/>
-          <path d="M8 18 Q12 16 16 18" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <div class="page">
+    <header class="topbar">
+      <div class="spacer" aria-hidden="true"></div>
+      <div class="brand">Morula Markets</div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle color theme">
+        <svg class="theme-toggle-icon" id="theme-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2.5"></path>
+          <path d="M12 19.5V22"></path>
+          <path d="M4.93 4.93l1.77 1.77"></path>
+          <path d="M17.3 17.3l1.77 1.77"></path>
+          <path d="M2 12h2.5"></path>
+          <path d="M19.5 12H22"></path>
+          <path d="M4.93 19.07l1.77-1.77"></path>
+          <path d="M17.3 6.7l1.77-1.77"></path>
         </svg>
-      </div>
-      <span class="logo-text">Morula <span>Market</span></span>
-    </a>
+        <span class="theme-toggle-label">Light mode</span>
+      </button>
+    </header>
 
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <!-- Sun icon (shown in dark mode) -->
-      <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/>
-        <line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/>
-        <line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <!-- Moon icon (shown in light mode) -->
-      <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
-  </header>
+    <main class="hero">
+      <section class="hero-card" aria-labelledby="hero-title">
+        <p class="eyebrow">Botswana marketplace</p>
+        <h1 id="hero-title">Coming soon.</h1>
+        <p class="hero-copy">
+          Morula Markets is launching soon for Botswana. Be the first to sign up and get early access before the marketplace opens publicly.
+        </p>
+        <div class="type-line" aria-live="polite">
+          <span id="type-prefix">Be the first to sign up as</span>
+          <span class="typed-word" id="typed-word"></span>
+          <span class="cursor">|</span>
+        </div>
 
-  <!-- HERO -->
-  <main class="hero">
+        <form class="waitlist-box" id="waitlist-form" novalidate>
+          <input class="waitlist-input" id="waitlist-email" type="email" name="email" placeholder="Enter your email for the waitlist" aria-label="Email for the waitlist" required>
+          <button class="button button-primary" id="waitlist-submit" type="button">Join the waitlist</button>
+        </form>
 
-    <div class="badge">
-      <span class="badge-dot"></span>
-      Coming Soon &nbsp;·&nbsp; Botswana Farm Marketplace
-    </div>
+        <div class="actions">
+          <a class="button button-whatsapp" href="https://wa.me/26775516905?text=Hi%20Masud%2C%20I%20want%20to%20chat%20about%20Morula%20Markets." target="_blank" rel="noreferrer">
+            <svg class="button-icon" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor">
+              <path d="M19.11 17.21c-.28-.14-1.64-.81-1.89-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.09-.16.19-.32.21-.6.07-.28-.14-1.16-.43-2.21-1.37-.82-.73-1.37-1.62-1.53-1.9-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.19-.28.28-.46.09-.19.05-.35-.02-.49-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.19 0-.49.07-.74.35-.25.28-.95.93-.95 2.26 0 1.32.97 2.6 1.11 2.79.14.19 1.9 2.9 4.61 4.07.64.28 1.15.44 1.54.56.65.21 1.25.18 1.72.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.21.16-1.32-.07-.11-.25-.18-.53-.32z"/>
+              <path d="M16.03 3.2c-6.97 0-12.63 5.65-12.63 12.61 0 2.22.58 4.39 1.68 6.3L3.2 28.8l6.86-1.8a12.65 12.65 0 0 0 5.97 1.52h.01c6.96 0 12.62-5.66 12.62-12.62 0-3.37-1.31-6.54-3.7-8.92A12.55 12.55 0 0 0 16.03 3.2zm0 23.19h-.01a10.5 10.5 0 0 1-5.35-1.47l-.38-.22-4.07 1.07 1.09-3.96-.25-.41a10.45 10.45 0 0 1-1.61-5.59c0-5.79 4.72-10.5 10.52-10.5 2.81 0 5.45 1.09 7.43 3.08a10.43 10.43 0 0 1 3.08 7.42c0 5.8-4.72 10.52-10.45 10.52z"/>
+            </svg>
+            Chat on WhatsApp
+          </a>
+        </div>
 
-    <h1 class="hero-headline">
-      Own Land.<br>
-      <span class="line2">Trade Farms.</span>
-    </h1>
+        <p class="waitlist-note" id="waitlist-note">Early signups open first for agents, sellers, and buyers.</p>
+      </section>
+    </main>
+  </div>
 
-    <p class="hero-sub">
-      Morula Market is Botswana's first dedicated digital marketplace for buying and selling farmland — arable plots, cattle ranches, game farms and smallholdings across all 10 districts.
-    </p>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://zioeumxpjaecgocsouyj.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_N39Prr3PH27w-bhEuu_eXw_UubsrycZ";
 
-    <!-- WAITLIST FORM -->
-    <div class="waitlist-wrap">
-      <div class="form-row" id="formRow">
-        <input
-          type="email"
-          id="emailInput"
-          placeholder="Enter your email address"
-          autocomplete="email"
-          inputmode="email"
-        />
-        <button onclick="joinWaitlist()">Join Waitlist</button>
-      </div>
-      <div class="success-msg" id="successMsg">
-        <span class="check">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2 6L5 9L10 3" stroke="#0a0a0a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        You're on the list! We'll be in touch soon.
-      </div>
-      <p class="form-note">Be first to access listings when we launch. No spam, ever.</p>
-    </div>
+    const themeToggle = document.getElementById("theme-toggle");
+    const typedWord = document.getElementById("typed-word");
+    const waitlistForm = document.getElementById("waitlist-form");
+    const waitlistEmail = document.getElementById("waitlist-email");
+    const waitlistSubmit = document.getElementById("waitlist-submit");
+    const waitlistNote = document.getElementById("waitlist-note");
+    const body = document.body;
+    const words = ["an agent", "a seller", "a buyer"];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
 
-    <!-- SOCIAL PROOF -->
-    <div class="social-proof">
-      <div class="avatar-stack">
-        <div class="av av-1">KM</div>
-        <div class="av av-2">TP</div>
-        <div class="av av-3">DN</div>
-        <div class="av av-4">RS</div>
-      </div>
-      <p class="proof-text"><strong><span class="count-badge" id="countBadge">0</span>+ people</strong> already on the waitlist</p>
-    </div>
+    function setThemeIcon(theme) {
+      const icon = document.getElementById("theme-toggle-icon");
 
-    <!-- OR DIVIDER -->
-    <div class="or-row">
-      <span>or reach out directly</span>
-    </div>
+      if (!icon) return;
 
-    <!-- WHATSAPP -->
-    <a
-      class="wa-btn"
-      href="https://wa.me/26771234567?text=Hi%2C%20I%27m%20interested%20in%20Morula%20Market%20and%20have%20a%20question."
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span class="wa-icon">
-        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </span>
-      <div style="display:flex;align-items:baseline;gap:5px">
-        <span class="wa-label">Chat on WhatsApp</span>
-        <span class="wa-sub">— Questions &amp; Inquiries</span>
-      </div>
-      <svg style="margin-left:auto;opacity:0.4;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 17L17 7M17 7H7M17 7v10"/>
-      </svg>
-    </a>
+      if (theme === "dark") {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3c0 .14-.01.29-.01.43a7 7 0 0 0 9.37 6.58c.15 0 .29-.01.43-.02z"></path>';
+      } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.5"></path><path d="M12 19.5V22"></path><path d="M4.93 4.93l1.77 1.77"></path><path d="M17.3 17.3l1.77 1.77"></path><path d="M2 12h2.5"></path><path d="M19.5 12H22"></path><path d="M4.93 19.07l1.77-1.77"></path><path d="M17.3 6.7l1.77-1.77"></path>';
+      }
+    }
 
-    <!-- FEATURE CHIPS -->
-    <div class="features">
-      <span class="feat-chip"><span class="feat-chip-icon">🌾</span> Arable Land</span>
-      <span class="feat-chip"><span class="feat-chip-icon">🐄</span> Cattle Ranches</span>
-      <span class="feat-chip"><span class="feat-chip-icon">🦁</span> Game Farms</span>
-      <span class="feat-chip"><span class="feat-chip-icon">🌿</span> Smallholdings</span>
-      <span class="feat-chip"><span class="feat-chip-icon">📍</span> All 10 Districts</span>
-    </div>
+    function applyTheme(theme) {
+      body.setAttribute("data-theme", theme);
+      const label = themeToggle.querySelector(".theme-toggle-label");
 
-  </main>
+      if (label) {
+        label.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      }
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-left">
-      <strong>Morula Market</strong> &copy; 2025<br>
-      Botswana's Farm Marketplace &mdash; Launching soon.
-    </div>
-    <div class="footer-right">
-      <a class="social-link" href="https://wa.me/26771234567" target="_blank" title="WhatsApp">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </a>
-      <a class="social-link" href="mailto:hello@morula.market" title="Email">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="4" width="20" height="16" rx="2"/>
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-        </svg>
-      </a>
-    </div>
-  </footer>
+      setThemeIcon(theme);
+      localStorage.setItem("morula-theme", theme);
+    }
 
-</div>
+    const savedTheme = localStorage.getItem("morula-theme");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      applyTheme(savedTheme);
+    }
 
-<script>
-// ── THEME TOGGLE ──
-const html = document.documentElement;
-const sunIcon = document.getElementById('sunIcon');
-const moonIcon = document.getElementById('moonIcon');
-const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+    });
 
-function applyTheme(theme) {
-  html.setAttribute('data-theme', theme);
-  if (theme === 'dark') {
-    sunIcon.style.display = '';
-    moonIcon.style.display = 'none';
-  } else {
-    sunIcon.style.display = 'none';
-    moonIcon.style.display = '';
-  }
-  localStorage.setItem('mm-theme', theme);
-}
+    let supabase = null;
 
-// Load saved theme
-const saved = localStorage.getItem('mm-theme');
-if (saved) applyTheme(saved);
-else if (window.matchMedia('(prefers-color-scheme: light)').matches) applyTheme('light');
+    if (
+      window.supabase &&
+      SUPABASE_URL !== "YOUR_SUPABASE_URL" &&
+      SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY"
+    ) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
 
-themeToggle.addEventListener('click', () => {
-  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-});
+    async function submitWaitlist() {
+      const email = waitlistEmail.value.trim().toLowerCase();
 
-// ── WAITLIST ──
-const waitlist = JSON.parse(localStorage.getItem('mm-waitlist') || '[]');
-let baseCount = 247;
+      if (!email) {
+        waitlistNote.textContent = "Enter a valid email address first.";
+        return;
+      }
 
-function updateCount() {
-  const total = baseCount + waitlist.length;
-  const el = document.getElementById('countBadge');
-  // Count up animation
-  let current = 0;
-  const step = Math.ceil(total / 40);
-  const iv = setInterval(() => {
-    current = Math.min(current + step, total);
-    el.textContent = current;
-    if (current >= total) clearInterval(iv);
-  }, 28);
-}
+      if (!supabase) {
+        waitlistNote.textContent = "Add your Supabase URL and anon key in this file to start collecting emails.";
+        return;
+      }
 
-updateCount();
+      waitlistNote.textContent = "Joining waitlist...";
+      waitlistSubmit.disabled = true;
 
-function joinWaitlist() {
-  const input = document.getElementById('emailInput');
-  const email = input.value.trim();
-  const formRow = document.getElementById('formRow');
-  const successMsg = document.getElementById('successMsg');
+      const { error } = await supabase
+        .from("waitlist_signups")
+        .insert({
+          email,
+          source: "coming-soon",
+          role_interest: "unknown"
+        });
 
-  if (!email || !email.includes('@')) {
-    input.style.outline = '2px solid rgba(220,60,60,0.5)';
-    input.style.borderRadius = '10px';
-    input.focus();
-    setTimeout(() => input.style.outline = '', 1200);
-    return;
-  }
+      if (error) {
+        if (error.code === "23505") {
+          waitlistNote.textContent = "That email is already on the waitlist.";
+          waitlistSubmit.disabled = false;
+          return;
+        }
 
-  if (!waitlist.includes(email)) {
-    waitlist.push(email);
-    localStorage.setItem('mm-waitlist', JSON.stringify(waitlist));
-  }
+        waitlistNote.textContent = error.message
+          ? `Could not save your email: ${error.message}`
+          : "Could not save your email right now. Please try again.";
+        waitlistSubmit.disabled = false;
+        return;
+      }
 
-  formRow.style.display = 'none';
-  successMsg.style.display = 'flex';
-  document.querySelector('.form-note').style.display = 'none';
-  updateCount();
-}
+      waitlistForm.reset();
+      waitlistNote.textContent = "You are on the waitlist. We will let you know when Morula Market opens.";
+      waitlistSubmit.disabled = false;
+    }
 
-document.getElementById('emailInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') joinWaitlist();
-});
-</script>
+    waitlistForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      submitWaitlist();
+    });
+
+    waitlistSubmit.addEventListener("click", () => {
+      submitWaitlist();
+    });
+
+    waitlistEmail.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        submitWaitlist();
+      }
+    });
+
+    function typeLoop() {
+      const currentWord = words[wordIndex];
+      let delay = deleting ? 55 : 95;
+
+      if (!deleting) {
+        charIndex += 1;
+        typedWord.textContent = currentWord.slice(0, charIndex);
+
+        if (charIndex === currentWord.length) {
+          deleting = true;
+          delay = 1200;
+        }
+      } else {
+        charIndex -= 1;
+        typedWord.textContent = currentWord.slice(0, charIndex);
+
+        if (charIndex === 0) {
+          deleting = false;
+          wordIndex = (wordIndex + 1) % words.length;
+          delay = 220;
+        }
+      }
+
+      setTimeout(typeLoop, delay);
+    }
+
+    typedWord.textContent = "";
+    charIndex = 0;
+    deleting = false;
+    typeLoop();
+  </script>
 </body>
 </html>
